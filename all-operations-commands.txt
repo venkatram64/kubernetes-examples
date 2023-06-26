@@ -1,0 +1,616 @@
+to start the minikube cluster
+
+1. minikube start --driver=docker
+
+2. minikube status
+
+3. minikube ip
+	to login into kubernetes node
+4. minikube ssh
+
+	docker@minikube:~$ docker ps
+
+in another window
+
+5. PS C:\Users\venka> kubectl cluster-info
+
+	kubectl get nodes
+
+	kubectl get pods
+
+	kubectl get namespaces
+
+	kubectl get pods --namespace=kube-system
+	to create a pod
+	ubectl run nginx --image=nginx
+
+	kubectl get pods
+
+
+	kubectl describe pod nginx
+
+
+6. goto minikube node
+
+	minikube ssh
+
+	docker ps | grep nginx
+	
+7. docker exec -it <<id>>  sh
+	
+	in container
+	hostname
+	
+	hostname -i
+	
+	connect to nginx server, using following command
+	
+	curl 172.17.0.3
+	
+	to come out of the container
+	
+	exit
+
+now we are in minikube node
+
+8. in another window
+PS C:\Users\venka> kubectl get pods -o wide 
+
+9 deleting the created pod
+kubectl delete pod nginx  
+kubectl get pods  
+
+10. aliasing in gitbash
+
+alias k="kubectl"
+
+11. deployment creation
+
+kubectl create deployment nginx-deployment --image=nginx
+
+12. kubectl get deployments
+
+13. kubectl get pods 
+
+14. kubectl describe deployment nginx-deployment 
+
+15. kubectl get pods
+
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-794f656f8b-rn5xh   1/1     Running   0          20m
+
+16. kubectl describe pod nginx-deployment-794f656f8b-rn5xh
+
+17. scaling up
+
+kubectl scale deployment nginx-deployment --replicas=5
+
+18. kubectl get pods  
+
+19. kubectl get pods -o wide 
+
+20. scaling down
+
+kubectl scale deployment nginx-deployment --replicas=3
+
+21. kubectl get pods 
+
+22. kubectl get pods -o wide 
+
+PS C:\Users\venka> kubectl get pods -o wide
+NAME                                READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+nginx-deployment-794f656f8b-kdclg   1/1     Running   0          5m    172.17.0.7   minikube   <none>           <none>
+nginx-deployment-794f656f8b-rn5xh   1/1     Running   0          29m   172.17.0.3   minikube   <none>           <none>
+nginx-deployment-794f656f8b-twvpp   1/1     Running   0          5m    172.17.0.5   minikube   <none>           <none>
+PS C:\Users\venka> curl 172.17.0.7  --> it would not connect 
+
+23. minikube ip 
+
+PS C:\Users\venka> minikube ip
+192.168.49.2
+
+24.  goto minikube node 
+
+minikube ssh
+
+PS C:\Users\venka> minikube ssh
+Last login: Thu Jun 22 07:10:04 2023 from 192.168.49.1
+docker@minikube:~$
+
+25. 
+
+docker@minikube:~$ curl 172.17.0.7
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+docker@minikube:~$
+
+26.  kubectl get deployments  
+
+PS C:\Users\venka> kubectl get deployments
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   3/3     3            3           41m
+
+27.
+
+kubectl expose deployment nginx-deployment --port=8081 --target-port=80
+
+PS C:\Users\venka> kubectl expose deployment nginx-deployment --port=8081 --target-port=80
+service/nginx-deployment exposed
+
+28. kubectl get services 
+PS C:\Users\venka> kubectl get services
+NAME               TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+kubernetes         ClusterIP   10.96.0.1     <none>        443/TCP    4d6h
+nginx-deployment   ClusterIP   10.109.8.51   <none>        8081/TCP   111s
+
+29. goto minikube node 
+
+minikube ssh
+
+PS C:\Users\venka> minikube ssh
+Last login: Thu Jun 22 07:10:04 2023 from 192.168.49.1
+docker@minikube:~$
+
+curl 10.109.8.51:8081
+
+docker@minikube:~$ curl 10.109.8.51:8081
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+
+30. kubectl describe service nginx-deployment
+
+31. removing the deployments
+kubectl delete deployment nginx-deployment
+
+32 removing the service
+
+kubectl delete service nginx-deployment
+
+33. kubectl get deploy
+
+kubectl get service
+
+34. run the following command
+
+kubectl create deployment k8s-web-hello --image=explorejava/k8s-web-hello
+
+PS C:\Users\venka> kubectl create deployment k8s-web-hello --image=explorejava/k8s-web-hello
+deployment.apps/k8s-web-hello created
+PS C:\Users\venka> kubectl get deployments
+
+35.
+
+PS C:\Users\venka> kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+k8s-web-hello-d75474f6d-m6gj8   1/1     Running   0          83s
+
+36. creating clusterIP
+
+kubectl expose deployment k8s-web-hello --port=3000
+
+PS C:\Users\venka> kubectl expose deployment k8s-web-hello --port=3000
+service/k8s-web-hello exposed
+
+37.
+
+PS C:\Users\venka> kubectl get services
+NAME            TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+k8s-web-hello   ClusterIP   10.99.3.54   <none>        3000/TCP   2m57s
+kubernetes      ClusterIP   10.96.0.1    <none>        443/TCP    11m
+
+38.
+
+PS C:\Users\venka> minikube ip
+192.168.49.2
+
+39.
+
+PS C:\Users\venka> minikube ssh
+docker@minikube:~$
+
+40.
+
+docker@minikube:~$ curl 10.99.3.54:3000
+Hello from the k8s-web-hello-d75474f6d-m6gj8docker@minikube:~$
+
+41.
+
+docker@minikube:~$  curl 10.99.3.54:3000; echo
+Hello from the k8s-web-hello-d75474f6d-m6gj8
+docker@minikube:~$
+
+42.  scaling
+
+PS C:\Users\venka> kubectl get deployments
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+k8s-web-hello   1/1     1            1           32m
+PS C:\Users\venka> kubectl scale deployment k8s-web-hello --replicas=4
+deployment.apps/k8s-web-hello scaled
+
+
+43.
+
+PS C:\Users\venka> kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+k8s-web-hello-d75474f6d-4nczl   1/1     Running   0          51s
+k8s-web-hello-d75474f6d-9lqlf   1/1     Running   0          51s
+k8s-web-hello-d75474f6d-m6gj8   1/1     Running   0          35m
+k8s-web-hello-d75474f6d-pr7c4   1/1     Running   0          51s
+PS C:\Users\venka>
+	
+	
+44.
+
+PS C:\Users\venka> kubectl get pods -o wide
+NAME                            READY   STATUS    RESTARTS   AGE     IP           NODE       NOMINATED NODE   READINESS GATES
+k8s-web-hello-d75474f6d-4nczl   1/1     Running   0          2m35s   172.17.0.4   minikube   <none>           <none>
+k8s-web-hello-d75474f6d-9lqlf   1/1     Running   0          2m35s   172.17.0.6   minikube   <none>           <none>
+k8s-web-hello-d75474f6d-m6gj8   1/1     Running   0          37m     172.17.0.3   minikube   <none>           <none>
+k8s-web-hello-d75474f6d-pr7c4   1/1     Running   0          2m35s   172.17.0.5   minikube   <none>           <none>
+PS C:\Users\venka>
+
+45.
+
+PS C:\Users\venka> kubectl get services
+NAME            TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+k8s-web-hello   ClusterIP   10.99.3.54   <none>        3000/TCP   34m
+kubernetes      ClusterIP   10.96.0.1    <none>        443/TCP    43m
+PS C:\Users\venka>
+
+46. goto worker node, each run, new pod responds b/c due to replicas(load balancing...)
+
+PS C:\Users\venka> minikube ip
+192.168.49.2
+PS C:\Users\venka> minikube ssh
+docker@minikube:~$ curl 10.99.3.54:3000
+Hello from the k8s-web-hello-d75474f6d-m6gj8docker@minikube:~$
+docker@minikube:~$  curl 10.99.3.54:3000; echo
+Hello from the k8s-web-hello-d75474f6d-m6gj8
+docker@minikube:~$ curl 10.99.3.54:3000; echo
+Hello from the k8s-web-hello-d75474f6d-9lqlf
+docker@minikube:~$ curl 10.99.3.54:3000; echo
+Hello from the k8s-web-hello-d75474f6d-m6gj8
+docker@minikube:~$ curl 10.99.3.54:3000; echo
+Hello from the k8s-web-hello-d75474f6d-4nczl
+docker@minikube:~$ curl 10.99.3.54:3000; echo
+Hello from the k8s-web-hello-d75474f6d-9lqlf
+
+47. delete the service
+
+PS C:\Users\venka> kubectl get services
+NAME            TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+k8s-web-hello   ClusterIP   10.99.3.54   <none>        3000/TCP   34m
+kubernetes      ClusterIP   10.96.0.1    <none>        443/TCP    43m
+PS C:\Users\venka> kubectl delete services k8s-web-hello
+service "k8s-web-hello" deleted
+PS C:\Users\venka>
+
+PS C:\Users\venka> kubectl get services
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   49m
+
+48.  use type as NodePort instead of ClusterIP
+
+creating service
+
+PS C:\Users\venka> kubectl expose deployment k8s-web-hello --type=NodePort --port=3000
+service/k8s-web-hello exposed
+
+49.  list services
+
+PS C:\Users\venka> kubectl get services
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+k8s-web-hello   NodePort    10.107.47.148   <none>        3000:32497/TCP   63s
+kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP          53m
+
+50. goto workernode
+
+PS C:\Users\venka> minikube ip
+192.168.49.2
+PS C:\Users\venka> minikube ssh
+Last login: Fri Jun 23 03:56:02 2023 from 192.168.49.1
+docker@minikube:~$ curl 10.107.47.148:3000;echo
+Hello from the k8s-web-hello-d75474f6d-9lqlf
+
+51. goto browser window
+http://192.168.49.2:32497   not working
+
+so use the following command
+
+PS C:\Users\venka> kubectl port-forward svc/k8s-web-hello 3000:3000
+Forwarding from 127.0.0.1:3000 -> 3000
+Forwarding from [::1]:3000 -> 3000
+
+http://127.0.0.1:3000
+
+52.
+
+PS C:\Users\venka> kubectl delete service k8s-web-hello
+service "k8s-web-hello" deleted
+
+53.
+
+PS C:\Users\venka> kubectl get service
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   156m
+
+54.  creating load balancer
+
+PS C:\Users\venka> kubectl expose deployment k8s-web-hello --type=LoadBalancer --port=3000
+service/k8s-web-hello exposed
+
+PS C:\Users\venka> kubectl get services
+NAME            TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+k8s-web-hello   LoadBalancer   10.111.81.169   <pending>     3000:30507/TCP   44s
+kubernetes      ClusterIP      10.96.0.1       <none>        443/TCP          159m
+PS C:\Users\venka>
+
+55.  kubectl get deploy
+
+PS C:\Users\venka> kubectl get deploy
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+k8s-web-hello   4/4     4            4           165m
+PS C:\Users\venka>
+
+56. scaling  
+
+PS C:\Users\venka> kubectl scale deployment k8s-web-hello --replicas=4
+deployment.apps/k8s-web-hello scaled
+PS C:\Users\venka>
+
+56.
+
+
+PS C:\Users\venka> kubectl scale deployment k8s-web-hello --replicas=4
+deployment.apps/k8s-web-hello scaled
+PS C:\Users\venka> kubectl describe service k8s-web-hello
+Name:                     k8s-web-hello
+Namespace:                default
+Labels:                   app=k8s-web-hello
+Annotations:              <none>
+Selector:                 app=k8s-web-hello
+Type:                     LoadBalancer
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.111.81.169
+IPs:                      10.111.81.169
+Port:                     <unset>  3000/TCP
+TargetPort:               3000/TCP
+NodePort:                 <unset>  30507/TCP
+Endpoints:                172.17.0.3:3000,172.17.0.4:3000,172.17.0.5:3000 + 1 more...
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+PS C:\Users\venka> kubectl describe deploy k8s-web-hello
+Name:                   k8s-web-hello
+Namespace:              default
+CreationTimestamp:      Fri, 23 Jun 2023 09:16:12 +0530
+Labels:                 app=k8s-web-hello
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=k8s-web-hello
+Replicas:               4 desired | 4 updated | 4 total | 4 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=k8s-web-hello
+  Containers:
+   k8s-web-hello:
+    Image:        explorejava/k8s-web-hello
+    Port:         <none>
+    Host Port:    <none>
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Progressing    True    NewReplicaSetAvailable
+  Available      True    MinimumReplicasAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   k8s-web-hello-d75474f6d (4/4 replicas created)
+Events:          <none>
+PS C:\Users\venka>
+57. roll out will start
+
+kubectl set image deployment k8s-web-hello k8s-web-hello=explorejava/k8s-web-hello:1.2.0
+
+PS C:\Users\venka> kubectl set image deployment k8s-web-hello k8s-web-hello=explorejava/k8s-web-hello:1.2.0
+deployment.apps/k8s-web-hello image updated
+PS C:\Users\venka>
+
+
+
+kubectl rollout status deploy k8s-web-hello
+
+PS C:\Users\venka> kubectl rollout status deploy k8s-web-hello
+deployment "k8s-web-hello" successfully rolled out
+PS C:\Users\venka>
+
+
+58. kubectl get pods
+
+PS C:\Users\venka> kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+k8s-web-hello-bbcfc58ff-dqhj2   1/1     Running   0          75s
+k8s-web-hello-bbcfc58ff-nv8dd   1/1     Running   0          84s
+k8s-web-hello-bbcfc58ff-qd5ff   1/1     Running   0          84s
+k8s-web-hello-bbcfc58ff-qrmzk   1/1     Running   0          78s
+PS C:\Users\venka>
+
+59.
+
+PS C:\Users\venka> kubectl get services
+NAME            TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+k8s-web-hello   LoadBalancer   10.111.81.169   <pending>     3000:30507/TCP   23h
+kubernetes      ClusterIP      10.96.0.1       <none>        443/TCP          25h
+PS C:\Users\venka>
+
+
+PS C:\Users\venka> minikube service k8s-web-hello
+🏃  Starting tunnel for service k8s-web-hello.
+🎉  Opening service default/k8s-web-hello in default browser...
+❗  Because you are using a Docker driver on windows, the terminal needs to be open to run it.
+
+above command not working so do the following port forward  
+
+PS C:\Users\venka> kubectl port-forward svc/k8s-web-hello 3000:3000
+Forwarding from 127.0.0.1:3000 -> 3000
+Forwarding from [::1]:3000 -> 3000
+
+60.
+
+PS C:\Users\venka> kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+k8s-web-hello-bbcfc58ff-dqhj2   1/1     Running   0          15m
+k8s-web-hello-bbcfc58ff-nv8dd   1/1     Running   0          15m
+k8s-web-hello-bbcfc58ff-qd5ff   1/1     Running   0          15m
+k8s-web-hello-bbcfc58ff-qrmzk   1/1     Running   0          15m
+PS C:\Users\venka> kubectl delete pod k8s-web-hello-bbcfc58ff-dqhj2
+
+new pod will be created automatically
+
+61.  to see the kubernetes dashboard
+
+
+PS C:\Users\venka> minikube dashboard
+🔌  Enabling dashboard ...
+    ▪ Using image kubernetesui/dashboard:v2.3.1
+    ▪ Using image kubernetesui/metrics-scraper:v1.0.7
+🤔  Verifying dashboard health ...
+🚀  Launching proxy ...
+🤔  Verifying proxy health ...
+🎉  Opening http://127.0.0.1:53731/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/ in your default browser...
+
+
+62.  deleting all services
+PS C:\Users\venka> kubectl delete all --all
+pod "k8s-web-hello-bbcfc58ff-4hn4m" deleted
+pod "k8s-web-hello-bbcfc58ff-nv8dd" deleted
+pod "k8s-web-hello-bbcfc58ff-qd5ff" deleted
+pod "k8s-web-hello-bbcfc58ff-qrmzk" deleted
+service "k8s-web-hello" deleted
+service "kubernetes" deleted
+deployment.apps "k8s-web-hello" deleted
+PS C:\Users\venka>
+
+PS C:\Users\venka> kubectl get pods
+No resources found in default namespace.
+PS C:\Users\venka>
+
+63. but service is created automatically
+
+PS C:\Users\venka> kubectl get services
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   2m30s
+PS C:\Users\venka>
+
+
+PS C:\Users\venka> kubectl get deploy
+No resources found in default namespace.
+PS C:\Users\venka>
+
+64.
+PS C:\Users\venka> kubectl get pods
+NAME                               READY   STATUS    RESTARTS   AGE
+k8s-web-to-nginx-79c45dd6b-2pfb6   1/1     Running   0          15m
+k8s-web-to-nginx-79c45dd6b-fflcf   1/1     Running   0          15m
+k8s-web-to-nginx-79c45dd6b-jbq7l   1/1     Running   0          15m
+k8s-web-to-nginx-79c45dd6b-scrx2   1/1     Running   0          15m
+k8s-web-to-nginx-79c45dd6b-z2x4p   1/1     Running   0          15m
+nginx-67d4bdd6f5-42xxk             1/1     Running   0          15m
+nginx-67d4bdd6f5-cbtgn             1/1     Running   0          15m
+nginx-67d4bdd6f5-gvsh5             1/1     Running   0          15m
+nginx-67d4bdd6f5-rhfch             1/1     Running   0          15m
+nginx-67d4bdd6f5-srt7j             1/1     Running   0          15m
+
+
+65.
+
+PS C:\Users\venka>  kubectl exec k8s-web-to-nginx-79c45dd6b-2pfb6 -- nslookup nginx
+Server:         10.96.0.10
+Address:        10.96.0.10:53
+
+** server can't find nginx.cluster.local: NXDOMAIN
+
+Name:   nginx.default.svc.cluster.local
+Address: 10.109.130.217
+
+
+** server can't find nginx.svc.cluster.local: NXDOMAIN
+
+** server can't find nginx.svc.cluster.local: NXDOMAIN
+
+** server can't find nginx.cluster.local: NXDOMAIN
+
+command terminated with exit code 1
+
+
+66.
+
+PS C:\Users\venka> kubectl get svc
+NAME               TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+k8s-web-to-nginx   LoadBalancer   10.101.19.204    <pending>     3333:30728/TCP   16m
+kubernetes         ClusterIP      10.96.0.1        <none>        443/TCP          129m
+nginx              ClusterIP      10.109.130.217   <none>        80/TCP           16m
+PS C:\Users\venka>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
