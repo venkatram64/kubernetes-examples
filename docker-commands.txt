@@ -1,0 +1,112 @@
+
+docker images
+
+docker history nginx
+
+docker rmi mysql:5.7.41
+
+
+
+creating container
+
+docker create <<imageID>>
+
+docker create --name <<any_name_you_wish>> nginx
+
+docker start any_name_you_wish
+
+docker stop any_name_you_wish
+
+
+docker ps -a will be shown created containers
+
+docker start <<containerID>>
+
+docker ps  will be shown running containers
+
+
+enter into docker container
+docker exec -it  <<ContainerID>>  --/bin/bash
+
+ls -ltr
+
+docker pull nginx
+docker inspect image nginx
+
+create start will be done by using the following command
+
+run with detached mode
+docker run -d --name any_name_you_wish nginx  
+
+
+
+docker ps
+
+docker stop any_name_you_wish
+
+docker kill any_name_you_wish
+
+docker exec -it nginx_service  /bin/bash
+
+in container
+hostname
+
+exit
+
+docker ps
+
+docker stop nginx_service
+
+docker rm nginx_service
+
+docker ps
+
+docker ps -a 
+
+-------------------
+
+docker network ls
+
+bridge network , we can run multiple containers  
+
+docker run -d --name httpd01 -p 8080:80 httpd 
+
+docker run -d --name nginx01 -p 8081:80 nginx 
+
+docker network inspect bridge 
+
+host network
+
+docker run -d --name nginx02 -net host nginx  
+
+we can not run multiple containers 
+
+building docker images from docker file
+
+
+docker build -t venka/ubapache2 .
+
+
+
+push into docker hub
+
+docker tag venka/ubapache2 venka/ubapache2:v1
+
+docker push venka/ubapache2:v1
+
+docker network ls 
+
+docker volume ls  
+
+ 
+docker volume inspect <<volumeID>>
+
+<<volumeID>>   fda644c40825d1a14a40715872cdd6d34a3f69357c908f7fe1c5fabe3163ce5c
+
+docker rm $(docker ps -a -q)
+
+docker volume rm <<volumeID>>
+
+
+
+
